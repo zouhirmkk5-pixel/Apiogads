@@ -1,12 +1,14 @@
 export default async function handler(req, res) {
   try {
-    const API_KEY = "42410|42412|IENtTzn7SVDea24KMF2Ju1H790vXQeTRWDZpnhKhbe4b5d6a";
+    const API_KEY = "42413|zw3R6EHsaln0oBy3ogNiN9iz1g5DpM1tDycc3ycxc93332d7";
 
     const ip =
       req.headers["x-forwarded-for"] || req.socket.remoteAddress || "";
     const userAgent = req.headers["user-agent"] || "";
 
-    const url = `https://confirmapp.site/api/v2?ip=${ip}&user_agent=${encodeURIComponent(userAgent)}`;
+    const url = `https://confirmapp.site/api/v2?ip=${ip}&user_agent=${encodeURIComponent(
+      userAgent
+    )}`;
 
     const response = await fetch(url, {
       method: "GET",
@@ -15,9 +17,18 @@ export default async function handler(req, res) {
       },
     });
 
-    const data = await response.json();
+    const text = await response.text();
 
-    // تحقق من الأخطاء
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      return res.status(500).json({
+        error: "Invalid API response",
+        details: text,
+      });
+    }
+
     if (!response.ok || data.error) {
       return res.status(500).json({
         error: "OGAds API error",
@@ -37,14 +48,13 @@ export default async function handler(req, res) {
     // اختيار أفضل offer
     const bestOffer = sortedOffers[0];
 
-    // إرسال النتيجة
-    res.json({
+    return res.json({
       success: true,
       offer: bestOffer,
     });
 
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       error: "Server error",
       details: error.message,
     });
