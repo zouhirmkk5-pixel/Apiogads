@@ -1,0 +1,12 @@
+{
+  "name": "ogads-api",
+  "version": "1.0.0",
+  "description": "OGAds API integration",
+  "main": "api/offers.js",
+  "scripts": {
+    "start": "node api/offers.js"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  }
+}
